@@ -1,0 +1,5 @@
+package com.dipak.giftly
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
