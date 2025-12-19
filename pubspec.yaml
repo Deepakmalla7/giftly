@@ -64,6 +64,11 @@ flutter:
   assets:
     - assets/images/gifts.png
     - assets/images/robot_gift.png
+    - assets/images/flowers.png
+    - assets/images/wallet.png
+    - assets/images/perfume.png
+    - assets/images/watch.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -76,15 +81,18 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
+  fonts:
+    - family: SchpenSans_Condensed-Bold 
+      fonts:
+        - asset: assets/fonts/OpenSans_Condensed-Bold.ttf
+
+    - family: pen_sans Italic 
+      fonts:
+        - asset: assets/fonts/OpenSans_Condensed-Italic.ttf
+    - family: open_sans Regular 
+      fonts:
+        - asset: assets/fonts/OpenSans_Condensed-Regular.ttf
+    
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
