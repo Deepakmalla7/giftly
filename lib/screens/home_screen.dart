@@ -80,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /////
   void _openGenderDialog() {
     showDialog(
       context: context,
@@ -114,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  //
   Widget _buildHome() {
     return Column(
       children: [
