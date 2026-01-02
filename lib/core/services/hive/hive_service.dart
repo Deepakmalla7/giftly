@@ -3,7 +3,7 @@
 // import '../../models/user.g.dart';
 // import '../../models/parcel.dart';
 // import '../../models/parcel.g.dart';
-
+//
 // class HiveService {
 //   static const String usersBoxName = 'usersBox';
 //   static const String sessionBoxName = 'sessionBox';
@@ -26,4 +26,6 @@
 //   static Box<String> sessionBox() => Hive.box<String>(sessionBoxName);
 //   static Box<Parcel> parcelsBox() => Hive.box<Parcel>(parcelsBoxName);
 // }
+//
+
 //
