@@ -27,3 +27,5 @@
 //   static Box<Parcel> parcelsBox() => Hive.box<Parcel>(parcelsBoxName);
 // }
 //
+
+//
