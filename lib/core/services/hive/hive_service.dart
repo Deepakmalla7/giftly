@@ -26,3 +26,4 @@
 //   static Box<String> sessionBox() => Hive.box<String>(sessionBoxName);
 //   static Box<Parcel> parcelsBox() => Hive.box<Parcel>(parcelsBoxName);
 // }
+//
