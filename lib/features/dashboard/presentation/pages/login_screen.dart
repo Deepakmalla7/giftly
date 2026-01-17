@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:giftly/screens/home_screen.dart';
-import 'package:giftly/screens/signup_screen.dart';
+import 'package:giftly/features/screens/home_screen.dart';
+import 'package:giftly/features/dashboard/presentation/pages/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

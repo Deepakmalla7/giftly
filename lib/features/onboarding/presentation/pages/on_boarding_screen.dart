@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:giftly/screens/login_screen.dart';
+import 'package:giftly/features/dashboard/presentation/pages/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -35,7 +35,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color.fromARGB(255, 194, 133, 157), // background color only
+        color: const Color.fromARGB(
+          255,
+          194,
+          133,
+          157,
+        ), // background color only
         child: SafeArea(
           child: Column(
             children: [
