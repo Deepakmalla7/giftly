@@ -12,6 +12,7 @@ class HiveService {
     }
 
     //
+    //
 
     try {
       await Hive.openBox<User>(usersBoxName);
