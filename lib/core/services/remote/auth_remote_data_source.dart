@@ -21,6 +21,7 @@ class AuthRemoteDataSource {
     if (!await _networkInfo.isConnected) {
       throw Exception('No internet connection');
     }
+    //
 
     try {
       final response = await _apiClient.post(
