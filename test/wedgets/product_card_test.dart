@@ -49,8 +49,9 @@ void main() {
       expect(titleWidget.style?.fontSize, 16);
     });
 
-    testWidgets('should display rating with star icon',
-        (WidgetTester tester) async {
+    testWidgets('should display rating with star icon', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         const MaterialApp(
@@ -73,8 +74,9 @@ void main() {
       expect(starIcon.size, 20);
     });
 
-    testWidgets('should display favorite icon button',
-        (WidgetTester tester) async {
+    testWidgets('should display favorite icon button', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         const MaterialApp(
@@ -92,13 +94,15 @@ void main() {
       expect(find.byIcon(Icons.favorite_border), findsOneWidget);
       expect(find.byType(IconButton), findsOneWidget);
 
-      final favoriteIcon =
-          tester.widget<Icon>(find.byIcon(Icons.favorite_border));
+      final favoriteIcon = tester.widget<Icon>(
+        find.byIcon(Icons.favorite_border),
+      );
       expect(favoriteIcon.color, Colors.black54);
     });
 
-    testWidgets('should have correct container styling',
-        (WidgetTester tester) async {
+    testWidgets('should have correct container styling', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         const MaterialApp(
@@ -122,8 +126,9 @@ void main() {
       expect(decoration.boxShadow!.length, 1);
     });
 
-    testWidgets('should be tappable on favorite button',
-        (WidgetTester tester) async {
+    testWidgets('should be tappable on favorite button', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       await tester.pumpWidget(
         const MaterialApp(
@@ -145,8 +150,9 @@ void main() {
       expect(find.byType(IconButton), findsOneWidget);
     });
 
-    testWidgets('should display different ratings correctly',
-        (WidgetTester tester) async {
+    testWidgets('should display different ratings correctly', (
+      WidgetTester tester,
+    ) async {
       // Test with different rating value
       const differentRating = 3.8;
 
@@ -167,8 +173,9 @@ void main() {
       expect(find.text(differentRating.toString()), findsOneWidget);
     });
 
-    testWidgets('should have proper layout structure',
-        (WidgetTester tester) async {
+    testWidgets('should have proper layout structure', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         const MaterialApp(

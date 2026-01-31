@@ -4,27 +4,21 @@ import 'package:giftly/features/screens/bottom_screen/about_screen.dart';
 
 void main() {
   group('AboutScreen Widget -', () {
-    testWidgets('should display about screen text',
-        (WidgetTester tester) async {
+    testWidgets('should display about screen text', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
 
       // Assert
       expect(find.text('this is about screen'), findsOneWidget);
     });
 
-    testWidgets('should use SizedBox.expand for layout',
-        (WidgetTester tester) async {
+    testWidgets('should use SizedBox.expand for layout', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
 
       // Assert
       expect(find.byType(SizedBox), findsOneWidget);
@@ -35,24 +29,17 @@ void main() {
 
     testWidgets('should center content', (WidgetTester tester) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
 
       // Assert
       expect(find.byType(Center), findsOneWidget);
     });
 
-    testWidgets('should have correct widget hierarchy',
-        (WidgetTester tester) async {
+    testWidgets('should have correct widget hierarchy', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
 
       // Assert
       expect(
@@ -63,21 +50,14 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.descendant(
-          of: find.byType(Center),
-          matching: find.byType(Text),
-        ),
+        find.descendant(of: find.byType(Center), matching: find.byType(Text)),
         findsOneWidget,
       );
     });
 
     testWidgets('should be a StatelessWidget', (WidgetTester tester) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
 
       // Assert
       expect(find.byType(AboutScreen), findsOneWidget);
@@ -85,8 +65,9 @@ void main() {
       expect(widget, isA<StatelessWidget>());
     });
 
-    testWidgets('should maintain const constructor',
-        (WidgetTester tester) async {
+    testWidgets('should maintain const constructor', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       const screen1 = AboutScreen();
       const screen2 = AboutScreen();
@@ -98,19 +79,16 @@ void main() {
     testWidgets('should render without errors', (WidgetTester tester) async {
       // Arrange & Act
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AboutScreen(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AboutScreen())),
       );
 
       // Assert - Should complete without throwing
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('should be composable in navigation',
-        (WidgetTester tester) async {
+    testWidgets('should be composable in navigation', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -130,18 +108,10 @@ void main() {
 
     testWidgets('should rebuild correctly', (WidgetTester tester) async {
       // Arrange
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
 
       // Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: AboutScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: AboutScreen()));
       await tester.pump();
 
       // Assert
@@ -154,9 +124,7 @@ void main() {
         MaterialApp(
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            textTheme: const TextTheme(
-              bodyMedium: TextStyle(fontSize: 18),
-            ),
+            textTheme: const TextTheme(bodyMedium: TextStyle(fontSize: 18)),
           ),
           home: const AboutScreen(),
         ),

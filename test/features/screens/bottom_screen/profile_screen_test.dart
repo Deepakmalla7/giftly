@@ -4,27 +4,21 @@ import 'package:giftly/features/screens/bottom_screen/profile_screen.dart';
 
 void main() {
   group('ProfileScreen Widget -', () {
-    testWidgets('should display profile screen text',
-        (WidgetTester tester) async {
+    testWidgets('should display profile screen text', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
       // Assert
       expect(find.text('this is Profile screen'), findsOneWidget);
     });
 
-    testWidgets('should use SizedBox.expand for layout',
-        (WidgetTester tester) async {
+    testWidgets('should use SizedBox.expand for layout', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
       // Assert
       expect(find.byType(SizedBox), findsOneWidget);
@@ -35,24 +29,17 @@ void main() {
 
     testWidgets('should center content', (WidgetTester tester) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
       // Assert
       expect(find.byType(Center), findsOneWidget);
     });
 
-    testWidgets('should have correct widget hierarchy',
-        (WidgetTester tester) async {
+    testWidgets('should have correct widget hierarchy', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
       // Assert
       expect(
@@ -63,21 +50,14 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.descendant(
-          of: find.byType(Center),
-          matching: find.byType(Text),
-        ),
+        find.descendant(of: find.byType(Center), matching: find.byType(Text)),
         findsOneWidget,
       );
     });
 
     testWidgets('should be a StatelessWidget', (WidgetTester tester) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
       // Assert
       expect(find.byType(ProfileScreen), findsOneWidget);
@@ -85,8 +65,9 @@ void main() {
       expect(widget, isA<StatelessWidget>());
     });
 
-    testWidgets('should maintain const constructor',
-        (WidgetTester tester) async {
+    testWidgets('should maintain const constructor', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       const screen1 = ProfileScreen();
       const screen2 = ProfileScreen();
@@ -98,19 +79,16 @@ void main() {
     testWidgets('should render without errors', (WidgetTester tester) async {
       // Arrange & Act
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: ProfileScreen(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: ProfileScreen())),
       );
 
       // Assert - Should complete without throwing
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('should be composable in larger widget tree',
-        (WidgetTester tester) async {
+    testWidgets('should be composable in larger widget tree', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -121,7 +99,9 @@ void main() {
               items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Profile'),
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
               ],
             ),
           ),
@@ -137,32 +117,22 @@ void main() {
 
     testWidgets('should rebuild correctly', (WidgetTester tester) async {
       // Arrange
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
 
       // Act
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfileScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
       await tester.pump();
 
       // Assert
       expect(find.text('this is Profile screen'), findsOneWidget);
     });
 
-    testWidgets('should work with different themes',
-        (WidgetTester tester) async {
+    testWidgets('should work with different themes', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.dark(),
-          home: const ProfileScreen(),
-        ),
+        MaterialApp(theme: ThemeData.dark(), home: const ProfileScreen()),
       );
 
       // Assert

@@ -29,8 +29,9 @@ void main() {
       expect(pressed, false);
     });
 
-    testWidgets('should call onPressed when tapped',
-        (WidgetTester tester) async {
+    testWidgets('should call onPressed when tapped', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       var pressed = false;
 
@@ -55,30 +56,26 @@ void main() {
       expect(pressed, true);
     });
 
-    testWidgets('should have correct button styling',
-        (WidgetTester tester) async {
+    testWidgets('should have correct button styling', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MyButton(
-              text: testText,
-              onPressed: () {},
-            ),
+            body: MyButton(text: testText, onPressed: () {}),
           ),
         ),
       );
 
       // Assert
-      final elevatedButton =
-          tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+      final elevatedButton = tester.widget<ElevatedButton>(
+        find.byType(ElevatedButton),
+      );
       final style = elevatedButton.style;
 
       expect(style, isNotNull);
-      expect(
-        style!.backgroundColor?.resolve({}),
-        const Color(0xFFF57C00),
-      );
+      expect(style!.backgroundColor?.resolve({}), const Color(0xFFF57C00));
       expect(style.foregroundColor?.resolve({}), Colors.white);
     });
 
@@ -87,10 +84,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MyButton(
-              text: testText,
-              onPressed: () {},
-            ),
+            body: MyButton(text: testText, onPressed: () {}),
           ),
         ),
       );
@@ -100,16 +94,14 @@ void main() {
       expect(sizedBox.width, double.infinity);
     });
 
-    testWidgets('should have correct text styling',
-        (WidgetTester tester) async {
+    testWidgets('should have correct text styling', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MyButton(
-              text: testText,
-              onPressed: () {},
-            ),
+            body: MyButton(text: testText, onPressed: () {}),
           ),
         ),
       );
@@ -124,10 +116,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MyButton(
-              text: testText,
-              onPressed: () {},
-            ),
+            body: MyButton(text: testText, onPressed: () {}),
           ),
         ),
       );
@@ -147,10 +136,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MyButton(
-              text: testText,
-              onPressed: () {},
-            ),
+            body: MyButton(text: testText, onPressed: () {}),
           ),
         ),
       );
@@ -159,8 +145,9 @@ void main() {
       expect(find.widgetWithText(ElevatedButton, testText), findsOneWidget);
     });
 
-    testWidgets('should call onPressed multiple times',
-        (WidgetTester tester) async {
+    testWidgets('should call onPressed multiple times', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       var pressCount = 0;
 
@@ -189,8 +176,9 @@ void main() {
       expect(pressCount, 3);
     });
 
-    testWidgets('should work with different text values',
-        (WidgetTester tester) async {
+    testWidgets('should work with different text values', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       const differentText = 'Submit';
 
@@ -198,10 +186,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MyButton(
-              text: differentText,
-              onPressed: () {},
-            ),
+            body: MyButton(text: differentText, onPressed: () {}),
           ),
         ),
       );

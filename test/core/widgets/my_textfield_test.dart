@@ -63,8 +63,9 @@ void main() {
       expect(find.text(inputText), findsOneWidget);
     });
 
-    testWidgets('should obscure text when obscureText is true',
-        (WidgetTester tester) async {
+    testWidgets('should obscure text when obscureText is true', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -84,8 +85,9 @@ void main() {
       expect(textField.obscureText, true);
     });
 
-    testWidgets('should not obscure text when obscureText is false',
-        (WidgetTester tester) async {
+    testWidgets('should not obscure text when obscureText is false', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -105,8 +107,9 @@ void main() {
       expect(textField.obscureText, false);
     });
 
-    testWidgets('should use correct keyboard type',
-        (WidgetTester tester) async {
+    testWidgets('should use correct keyboard type', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -126,8 +129,9 @@ void main() {
       expect(textField.keyboardType, TextInputType.emailAddress);
     });
 
-    testWidgets('should have outlined border decoration',
-        (WidgetTester tester) async {
+    testWidgets('should have outlined border decoration', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -169,8 +173,9 @@ void main() {
       expect(controller.text, 'Initial text');
     });
 
-    testWidgets('should update controller when text changes',
-        (WidgetTester tester) async {
+    testWidgets('should update controller when text changes', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       await tester.pumpWidget(
         MaterialApp(
@@ -192,8 +197,9 @@ void main() {
       expect(controller.text, 'New text');
     });
 
-    testWidgets('should work with number keyboard type',
-        (WidgetTester tester) async {
+    testWidgets('should work with number keyboard type', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -213,8 +219,9 @@ void main() {
       expect(textField.keyboardType, TextInputType.phone);
     });
 
-    testWidgets('should clear text when controller is cleared',
-        (WidgetTester tester) async {
+    testWidgets('should clear text when controller is cleared', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       await tester.pumpWidget(
         MaterialApp(
