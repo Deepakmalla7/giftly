@@ -24,6 +24,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     _loadCurrentUser();
   }
+  //
 
   void _loadCurrentUser() async {
     final authRepository = ref.read(authRepositoryProvider);

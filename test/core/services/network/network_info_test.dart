@@ -29,6 +29,7 @@ void main() {
       expect(isConnected, true);
       verify(() => mockConnectivity.checkConnectivity()).called(1);
     });
+    //
 
     test('isConnected should return true when connected to mobile', () async {
       // Arrange
