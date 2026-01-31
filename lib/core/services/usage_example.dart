@@ -59,6 +59,7 @@
 //   }
 // }
 //
+//
 // 2. Alternative: Direct NetworkInfo check
 //
 // final networkInfo = ref.watch(networkInfoProvider);
