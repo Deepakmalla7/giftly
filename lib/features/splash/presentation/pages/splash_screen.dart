@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:giftly/features/onboarding/presentation/pages/on_boarding_screen.dart';
+import 'package:giftly/features/screens/home_screen.dart';
+import 'package:giftly/core/api/api_client.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,18 +12,34 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final ApiClient _apiClient = ApiClient();
+
   @override
   void initState() {
     super.initState();
+    _checkAuthAndNavigate();
+  }
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
+  Future<void> _checkAuthAndNavigate() async {
+    // Wait for splash screen to show
+    await Future.delayed(const Duration(seconds: 3));
 
+    if (!mounted) return;
+
+    // Check if user has authentication token
+    final token = await _apiClient.getToken();
+    final isLoggedIn = token != null && token.isNotEmpty;
+
+    final nextScreen = isLoggedIn
+        ? const HomeScreen()
+        : const OnboardingScreen();
+
+    if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+        MaterialPageRoute(builder: (_) => nextScreen),
       );
-    });
+    }
   }
 
   @override

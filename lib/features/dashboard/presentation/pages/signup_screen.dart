@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:giftly/features/screens/home_screen.dart';
+import 'package:giftly/features/dashboard/presentation/pages/login_screen.dart';
+import 'package:giftly/core/providers/service_providers.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _onSignUp() {
+  Future<void> _onSignUp() async {
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
@@ -35,15 +39,78 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    // Navigate to HomeScreen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Check internet connection first
+      final networkInfo = ref.read(networkInfoProvider);
+      final isConnected = await networkInfo.isConnected;
+
+      if (!isConnected) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No internet connection. Please connect and try again.',
+              ),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Proceed with registration
+      final authRepository = ref.read(authRepositoryProvider);
+      await authRepository.register(
+        _nameController.text,
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (mounted) {
+        // Clear the token so user needs to log in
+        await ref.read(authRepositoryProvider).logout();
+
+        // Navigate to login screen with success message
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Registration successful! Please log in with your credentials.',
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Watch connection status
+    final connectionStatus = ref.watch(connectionStatusProvider);
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -59,6 +126,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Connection Status
+                connectionStatus.when(
+                  data: (isConnected) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isConnected
+                            ? Colors.green.withOpacity(0.2)
+                            : Colors.red.withOpacity(0.2),
+                        border: Border.all(
+                          color: isConnected ? Colors.green : Colors.red,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isConnected ? Icons.cloud_done : Icons.cloud_off,
+                            color: isConnected ? Colors.green : Colors.red,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            isConnected ? '✓ Online' : '✗ Offline',
+                            style: TextStyle(
+                              color: isConnected ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  loading: () => Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        SizedBox(width: 8),
+                        Text('Checking connection...'),
+                      ],
+                    ),
+                  ),
+                  error: (_, __) => Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: const Text(
+                      'Connection check failed',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.orange),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 20),
 
                 const Text(
@@ -91,6 +217,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _nameController,
+                  enabled: !_isLoading,
                   decoration: _inputDecoration('Enter Your Full Name'),
                 ),
 
@@ -103,6 +230,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _mobileController,
+                  enabled: !_isLoading,
                   keyboardType: TextInputType.phone,
                   decoration: _inputDecoration('Valid Mobile Number'),
                 ),
@@ -116,6 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _emailController,
+                  enabled: !_isLoading,
                   keyboardType: TextInputType.emailAddress,
                   decoration: _inputDecoration('Enter the Email'),
                 ),
@@ -129,6 +258,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _passwordController,
+                  enabled: !_isLoading,
                   obscureText: _obscurePassword,
                   decoration: _inputDecoration('Strong Password').copyWith(
                     suffixIcon: IconButton(
@@ -156,17 +286,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 200,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _onSignUp,
+                      onPressed: _isLoading ? null : _onSignUp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5D4A9C),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                          : const Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                 ),
