@@ -11,6 +11,8 @@ class HiveService {
       Hive.registerAdapter(UserAdapter());
     }
 
+    //
+
     try {
       await Hive.openBox<User>(usersBoxName);
       await Hive.openBox<String>(sessionBoxName);
