@@ -52,7 +52,7 @@ void main() {
         'password': testPassword,
         'profilePhoto': testProfilePhoto,
       };
-
+      //
       // Act
       final user = User.fromJson(json);
 
