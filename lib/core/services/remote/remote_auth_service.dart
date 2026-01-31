@@ -7,6 +7,7 @@ class RemoteAuthService {
   final NetworkInfo _networkInfo;
 
   RemoteAuthService(this._apiClient, this._networkInfo);
+  //
 
   Future<Map<String, dynamic>> register(
     String name,
