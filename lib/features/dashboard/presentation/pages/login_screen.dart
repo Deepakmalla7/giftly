@@ -1,19 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:giftly/features/screens/home_screen.dart';
 import 'package:giftly/features/dashboard/presentation/pages/signup_screen.dart';
+import 'package:giftly/core/providers/service_providers.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter email and password')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Check internet connection first
+      final networkInfo = ref.read(networkInfoProvider);
+      final isConnected = await networkInfo.isConnected;
+
+      if (!isConnected) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No internet connection. Please connect and try again.',
+              ),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Proceed with login
+      final authRepository = ref.read(authRepositoryProvider);
+      await authRepository.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Watch connection status
+    final connectionStatus = ref.watch(connectionStatusProvider);
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -29,6 +103,64 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Connection Status
+                connectionStatus.when(
+                  data: (isConnected) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isConnected
+                            ? Colors.green.withOpacity(0.2)
+                            : Colors.red.withOpacity(0.2),
+                        border: Border.all(
+                          color: isConnected ? Colors.green : Colors.red,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isConnected ? Icons.cloud_done : Icons.cloud_off,
+                            color: isConnected ? Colors.green : Colors.red,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            isConnected ? '✓ Online' : '✗ Offline',
+                            style: TextStyle(
+                              color: isConnected ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  loading: () => Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        SizedBox(width: 8),
+                        Text('Checking connection...'),
+                      ],
+                    ),
+                  ),
+                  error: (_, __) => Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: const Text(
+                      'Connection check failed',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.orange),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 const Text(
                   'Welcome!',
@@ -45,10 +177,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // Username
+                // Username (Email)
                 TextField(
+                  controller: _emailController,
+                  enabled: !_isLoading,
                   decoration: InputDecoration(
-                    hintText: 'Enter username',
+                    hintText: 'Enter email',
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
@@ -65,6 +199,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Password
                 TextField(
+                  controller: _passwordController,
+                  enabled: !_isLoading,
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -108,14 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Login button
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4A3B8B),
                     foregroundColor: Colors.white,
@@ -124,10 +253,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Log In',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : const Text(
+                          'Log In',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
 
                 const SizedBox(height: 24),

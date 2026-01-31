@@ -1,31 +1,30 @@
-// import 'package:hive_flutter/hive_flutter.dart';
-// import '../../models/user.dart';
-// import '../../models/user.g.dart';
-// import '../../models/parcel.dart';
-// import '../../models/parcel.g.dart';
-//
-// class HiveService {
-//   static const String usersBoxName = 'usersBox';
-//   static const String sessionBoxName = 'sessionBox';
-//   static const String parcelsBoxName = 'parcelsBox';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../../models/user.dart';
 
-//   static Future<void> init() async {
-//     await Hive.initFlutter();
-//     if (!Hive.isAdapterRegistered(0)) {
-//       Hive.registerAdapter(UserAdapter());
-//     }
-//     if (!Hive.isAdapterRegistered(1)) {
-//       Hive.registerAdapter(ParcelAdapter());
-//     }
-//     await Hive.openBox<User>(usersBoxName);
-//     await Hive.openBox<String>(sessionBoxName);
-//     await Hive.openBox<Parcel>(parcelsBoxName);
-//   }
+class HiveService {
+  static const String usersBoxName = 'usersBox';
+  static const String sessionBoxName = 'sessionBox';
 
-//   static Box<User> usersBox() => Hive.box<User>(usersBoxName);
-//   static Box<String> sessionBox() => Hive.box<String>(sessionBoxName);
-//   static Box<Parcel> parcelsBox() => Hive.box<Parcel>(parcelsBoxName);
-// }
-//
+  static Future<void> init() async {
+    await Hive.initFlutter();
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(UserAdapter());
+    }
 
-//
+    try {
+      await Hive.openBox<User>(usersBoxName);
+      await Hive.openBox<String>(sessionBoxName);
+    } catch (e) {
+      // If there's a schema mismatch, delete old boxes and recreate
+      print('Error opening Hive boxes: $e');
+      print('Clearing old Hive data...');
+      await Hive.deleteBoxFromDisk(usersBoxName);
+      await Hive.deleteBoxFromDisk(sessionBoxName);
+      await Hive.openBox<User>(usersBoxName);
+      await Hive.openBox<String>(sessionBoxName);
+    }
+  }
+
+  static Box<User> usersBox() => Hive.box<User>(usersBoxName);
+  static Box<String> sessionBox() => Hive.box<String>(sessionBoxName);
+}

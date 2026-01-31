@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:giftly/wedgets/product_card.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:giftly/features/profile/presentation/pages/profile_screen.dart';
 // import 'package:giftly/screens/bottom_screen/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -212,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final screens = [
       _buildHome(),
       _buildPlaceholder('Cart Screen'),
-      _buildPlaceholder('Profile Screen'),
+      const ProfileScreen(),
       _buildPlaceholder('About Screen'),
     ];
 
