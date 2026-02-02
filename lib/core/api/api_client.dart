@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:giftly/core/api/api_endpoints.dart';
 
 class ApiClient {
   late final Dio _dio;
@@ -13,9 +14,10 @@ class ApiClient {
       BaseOptions(
         // Use 10.0.2.2 for Android emulator, localhost for iOS simulator/web
         // For physical device, use your computer's IP address (e.g., 192.168.x.x)
-        baseUrl: 'http://10.0.2.2:3000/api',
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
+        baseUrl: ApiEndpoints.baseUrl,
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+        sendTimeout: const Duration(seconds: 60),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
