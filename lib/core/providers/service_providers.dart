@@ -4,6 +4,8 @@ import 'package:giftly/core/services/hive/hive_auth_service.dart';
 import 'package:giftly/core/services/network/network_info.dart';
 import 'package:giftly/core/services/remote/remote_auth_service.dart';
 import 'package:giftly/core/repositories/auth_repository.dart';
+import 'package:giftly/core/services/remote/remote_gift_service.dart';
+import 'package:giftly/core/repositories/gift_repository.dart';
 
 // Network Info Provider - Singleton
 final networkInfoProvider = Provider<NetworkInfo>((ref) {
@@ -32,6 +34,14 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final hiveService = ref.watch(hiveAuthServiceProvider);
   final remoteService = ref.watch(remoteAuthServiceProvider);
   return AuthRepository(hiveService, remoteService);
+});
+
+// Gift Repository Provider - Singleton
+final giftRepositoryProvider = Provider<GiftRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  final networkInfo = ref.watch(networkInfoProvider);
+  final remoteService = RemoteGiftService(apiClient, networkInfo);
+  return GiftRepository(remoteService);
 });
 
 // Stream for connection status
