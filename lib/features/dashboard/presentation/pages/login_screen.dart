@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:giftly/features/screens/home_screen.dart';
 import 'package:giftly/features/dashboard/presentation/pages/signup_screen.dart';
+import 'package:giftly/features/dashboard/presentation/pages/forgot_password_screen.dart';
 import 'package:giftly/core/providers/service_providers.dart';
+import 'package:giftly/features/screens/home_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -87,6 +88,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     // Watch connection status
     final connectionStatus = ref.watch(connectionStatusProvider);
+    final mediaQuery = MediaQuery.of(context);
+    final size = mediaQuery.size;
+    final isSmallHeight = size.height < 700;
+    final imageHeight = (size.height * 0.22).clamp(120.0, 220.0);
 
     return Scaffold(
       body: Container(
@@ -98,231 +103,281 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Connection Status
-                connectionStatus.when(
-                  data: (isConnected) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isConnected
-                            ? Colors.green.withOpacity(0.2)
-                            : Colors.red.withOpacity(0.2),
-                        border: Border.all(
-                          color: isConnected ? Colors.green : Colors.red,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            isConnected ? Icons.cloud_done : Icons.cloud_off,
-                            color: isConnected ? Colors.green : Colors.red,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            isConnected ? '✓ Online' : '✗ Offline',
-                            style: TextStyle(
-                              color: isConnected ? Colors.green : Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  loading: () => Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  16,
+                  24,
+                  16 + mediaQuery.viewInsets.bottom,
+                ),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        SizedBox(width: 8),
-                        Text('Checking connection...'),
-                      ],
-                    ),
-                  ),
-                  error: (_, __) => Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: const Text(
-                      'Connection check failed',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.orange),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Welcome!',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/images/gifts.png',
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(height: 40),
-
-                // Username (Email)
-                TextField(
-                  controller: _emailController,
-                  enabled: !_isLoading,
-                  decoration: InputDecoration(
-                    hintText: 'Enter email',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Password
-                TextField(
-                  controller: _passwordController,
-                  enabled: !_isLoading,
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-
-                // Forget password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Forget Password?',
-                      style: TextStyle(color: Colors.black87),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Login button
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4A3B8B),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                        // Connection Status
+                        connectionStatus.when(
+                          data: (isConnected) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isConnected
+                                    ? Colors.green.withOpacity(0.2)
+                                    : Colors.red.withOpacity(0.2),
+                                border: Border.all(
+                                  color: isConnected
+                                      ? Colors.green
+                                      : Colors.red,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    isConnected
+                                        ? Icons.cloud_done
+                                        : Icons.cloud_off,
+                                    color: isConnected
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    isConnected ? 'Online' : 'Offline',
+                                    style: TextStyle(
+                                      color: isConnected
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          loading: () => Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Text('Checking connection...'),
+                              ],
                             ),
                           ),
-                        )
-                      : const Text(
-                          'Log In',
+                          error: (_, __) => Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: const Text(
+                              'Connection check failed',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.orange),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: isSmallHeight ? 16 : 20),
+                        Text(
+                          'Welcome back',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: isSmallHeight ? 26 : 32,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                ),
-
-                const SizedBox(height: 24),
-                const Row(
-                  children: [
-                    Expanded(child: Divider()),
-                    SizedBox(width: 16),
-                    SizedBox(width: 16),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Register Navigation
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Not a member?'),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpScreen(),
+                        SizedBox(height: isSmallHeight ? 12 : 20),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            'assets/images/gifts.png',
+                            height: imageHeight.toDouble(),
+                            fit: BoxFit.cover,
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'Register now',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                    ),
-                  ],
-                ),
+                        SizedBox(height: isSmallHeight ? 20 : 32),
 
-                const Spacer(),
+                        // Username (Email)
+                        TextField(
+                          controller: _emailController,
+                          enabled: !_isLoading,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          autofillHints: const [AutofillHints.email],
+                          decoration: InputDecoration(
+                            hintText: 'Enter email',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
 
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 24.0),
-                    child: Text(
-                      'Help and Support',
-                      style: TextStyle(color: Colors.black87),
+                        // Password
+                        TextField(
+                          controller: _passwordController,
+                          enabled: !_isLoading,
+                          obscureText: _obscureText,
+                          textInputAction: TextInputAction.done,
+                          autofillHints: const [AutofillHints.password],
+                          onSubmitted: (_) {
+                            if (!_isLoading) {
+                              _login();
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Password',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureText = !_obscureText;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+
+                        // Forget password
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPasswordScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Forget Password?',
+                              style: TextStyle(color: Colors.black87),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: isSmallHeight ? 8 : 16),
+
+                        // Login button
+                        ElevatedButton(
+                          onPressed: _isLoading ? null : _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4A3B8B),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : const Text(
+                                  'Log In',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        ),
+
+                        SizedBox(height: isSmallHeight ? 16 : 24),
+                        Row(
+                          children: const [
+                            Expanded(child: Divider()),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Text('OR'),
+                            ),
+                            Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Register Navigation
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Not a member?'),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignUpScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Register now',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 12.0),
+                            child: Text(
+                              'Help and Support',
+                              style: TextStyle(color: Colors.black87),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
