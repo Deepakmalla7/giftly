@@ -9,12 +9,10 @@ class MockBox extends Mock implements Box<User> {}
 class MockSessionBox extends Mock implements Box {}
 
 void main() {
-  late HiveAuthService hiveAuthService;
   late MockBox mockBox;
   late MockSessionBox mockSessionBox;
 
   setUp(() {
-    hiveAuthService = HiveAuthService();
     mockBox = MockBox();
     mockSessionBox = MockSessionBox();
   });
