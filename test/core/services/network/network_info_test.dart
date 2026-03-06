@@ -6,12 +6,10 @@ import 'package:mocktail/mocktail.dart';
 class MockConnectivity extends Mock implements Connectivity {}
 
 void main() {
-  late NetworkInfoImpl networkInfo;
   late MockConnectivity mockConnectivity;
 
   setUp(() {
     mockConnectivity = MockConnectivity();
-    networkInfo = NetworkInfoImpl();
   });
 
   group('NetworkInfoImpl -', () {
@@ -19,27 +17,26 @@ void main() {
       // Arrange
       when(
         () => mockConnectivity.checkConnectivity(),
-      ).thenAnswer((_) async => [ConnectivityResult.wifi]);
+      ).thenAnswer((_) async => ConnectivityResult.wifi);
 
       // Act
-      final results = await mockConnectivity.checkConnectivity();
-      final isConnected = results.contains(ConnectivityResult.wifi);
+      final result = await mockConnectivity.checkConnectivity();
+      final isConnected = result == ConnectivityResult.wifi;
 
       // Assert
       expect(isConnected, true);
       verify(() => mockConnectivity.checkConnectivity()).called(1);
     });
-    //
 
     test('isConnected should return true when connected to mobile', () async {
       // Arrange
       when(
         () => mockConnectivity.checkConnectivity(),
-      ).thenAnswer((_) async => [ConnectivityResult.mobile]);
+      ).thenAnswer((_) async => ConnectivityResult.mobile);
 
       // Act
-      final results = await mockConnectivity.checkConnectivity();
-      final isConnected = results.contains(ConnectivityResult.mobile);
+      final result = await mockConnectivity.checkConnectivity();
+      final isConnected = result == ConnectivityResult.mobile;
 
       // Assert
       expect(isConnected, true);
@@ -50,11 +47,11 @@ void main() {
       // Arrange
       when(
         () => mockConnectivity.checkConnectivity(),
-      ).thenAnswer((_) async => [ConnectivityResult.ethernet]);
+      ).thenAnswer((_) async => ConnectivityResult.ethernet);
 
       // Act
-      final results = await mockConnectivity.checkConnectivity();
-      final isConnected = results.contains(ConnectivityResult.ethernet);
+      final result = await mockConnectivity.checkConnectivity();
+      final isConnected = result == ConnectivityResult.ethernet;
 
       // Assert
       expect(isConnected, true);
@@ -65,14 +62,14 @@ void main() {
       // Arrange
       when(
         () => mockConnectivity.checkConnectivity(),
-      ).thenAnswer((_) async => [ConnectivityResult.none]);
+      ).thenAnswer((_) async => ConnectivityResult.none);
 
       // Act
-      final results = await mockConnectivity.checkConnectivity();
+      final result = await mockConnectivity.checkConnectivity();
       final isConnected =
-          results.contains(ConnectivityResult.wifi) ||
-          results.contains(ConnectivityResult.mobile) ||
-          results.contains(ConnectivityResult.ethernet);
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.ethernet;
 
       // Assert
       expect(isConnected, false);
@@ -95,28 +92,27 @@ void main() {
 
     test('isConnected should handle multiple connectivity results', () async {
       // Arrange
-      when(() => mockConnectivity.checkConnectivity()).thenAnswer(
-        (_) async => [ConnectivityResult.wifi, ConnectivityResult.mobile],
-      );
+      when(
+        () => mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => ConnectivityResult.wifi);
 
       // Act
-      final results = await mockConnectivity.checkConnectivity();
+      final result = await mockConnectivity.checkConnectivity();
       final isConnected =
-          results.contains(ConnectivityResult.wifi) ||
-          results.contains(ConnectivityResult.mobile);
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile;
 
       // Assert
       expect(isConnected, true);
-      expect(results.length, 2);
       verify(() => mockConnectivity.checkConnectivity()).called(1);
     });
 
     test('connectionStream should emit connectivity changes', () async {
       // Arrange
       final stream = Stream.fromIterable([
-        [ConnectivityResult.wifi],
-        [ConnectivityResult.none],
-        [ConnectivityResult.mobile],
+        ConnectivityResult.wifi,
+        ConnectivityResult.none,
+        ConnectivityResult.mobile,
       ]);
 
       when(
@@ -128,7 +124,7 @@ void main() {
       await for (final result in mockConnectivity.onConnectivityChanged.take(
         3,
       )) {
-        results.add(result);
+        results.add([result]);
       }
 
       // Assert

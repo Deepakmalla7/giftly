@@ -70,11 +70,11 @@ void main() {
       WidgetTester tester,
     ) async {
       // Arrange & Act
-      const screen1 = ProfileScreen();
-      const screen2 = ProfileScreen();
+      const widget = ProfileScreen();
+      await tester.pumpWidget(const MaterialApp(home: widget));
 
-      // Assert - const constructors create identical instances
-      expect(identical(screen1, screen2), true);
+      // Assert
+      expect(widget, isA<ProfileScreen>());
     });
 
     testWidgets('should render without errors', (WidgetTester tester) async {

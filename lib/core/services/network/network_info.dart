@@ -6,7 +6,10 @@ abstract class NetworkInfo {
 }
 
 class NetworkInfoImpl implements NetworkInfo {
-  final Connectivity _connectivity = Connectivity();
+  final Connectivity _connectivity;
+
+  NetworkInfoImpl({Connectivity? connectivity})
+    : _connectivity = connectivity ?? Connectivity();
 
   bool _isConnectedResult(dynamic result) {
     if (result is List<ConnectivityResult>) {

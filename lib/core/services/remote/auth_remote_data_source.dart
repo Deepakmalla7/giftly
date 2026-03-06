@@ -14,19 +14,28 @@ class AuthRemoteDataSource {
        _networkInfo = networkInfo;
 
   Future<dynamic> register({
-    required String name,
+    required String firstName,
+    required String lastName,
+    required String username,
     required String email,
     required String password,
+    required String confirmPassword,
   }) async {
     if (!await _networkInfo.isConnected) {
       throw Exception('No internet connection');
     }
-    //
 
     try {
       final response = await _apiClient.post(
         ApiEndpoints.register,
-        data: {'name': name, 'email': email, 'password': password},
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'username': username,
+          'email': email,
+          'password': password,
+          'confirmPassword': confirmPassword,
+        },
       );
 
       if (response.statusCode == 201) {

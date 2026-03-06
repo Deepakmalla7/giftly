@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:giftly/features/screens/home_screen.dart';
 import 'package:giftly/features/dashboard/presentation/pages/login_screen.dart';
 import 'package:giftly/core/providers/service_providers.dart';
 
@@ -12,29 +11,45 @@ class SignUpScreen extends ConsumerStatefulWidget {
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _mobileController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   Future<void> _onSignUp() async {
-    if (_nameController.text.isEmpty ||
+    if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _usernameController.text.isEmpty ||
         _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
       );
       return;
     }
@@ -65,9 +80,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       // Proceed with registration
       final authRepository = ref.read(authRepositoryProvider);
       await authRepository.register(
-        _nameController.text,
-        _emailController.text,
-        _passwordController.text,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        username: _usernameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+        confirmPassword: _confirmPasswordController.text,
       );
 
       if (mounted) {
@@ -211,28 +229,40 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 const SizedBox(height: 24),
 
                 const Text(
-                  'Full Name',
+                  'First Name',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: _nameController,
+                  controller: _firstNameController,
                   enabled: !_isLoading,
-                  decoration: _inputDecoration('Enter Your Full Name'),
+                  decoration: _inputDecoration('Enter Your First Name'),
                 ),
 
                 const SizedBox(height: 16),
 
                 const Text(
-                  'Mobile Number',
+                  'Last Name',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: _mobileController,
+                  controller: _lastNameController,
                   enabled: !_isLoading,
-                  keyboardType: TextInputType.phone,
-                  decoration: _inputDecoration('Valid Mobile Number'),
+                  decoration: _inputDecoration('Enter Your Last Name'),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Username',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _usernameController,
+                  enabled: !_isLoading,
+                  decoration: _inputDecoration('Choose a Username'),
                 ),
 
                 const SizedBox(height: 16),
@@ -271,6 +301,35 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Confirm Password',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _confirmPasswordController,
+                  enabled: !_isLoading,
+                  obscureText: _obscureConfirmPassword,
+                  decoration:
+                      _inputDecoration('Re-enter Your Password').copyWith(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
                         });
                       },
                     ),
@@ -333,7 +392,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 }

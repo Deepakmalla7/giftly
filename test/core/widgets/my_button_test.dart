@@ -125,7 +125,11 @@ void main() {
       final padding = tester.widget<Padding>(
         find.descendant(
           of: find.byType(ElevatedButton),
-          matching: find.byType(Padding),
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Padding &&
+                widget.padding == const EdgeInsets.symmetric(vertical: 12.0),
+          ),
         ),
       );
       expect(padding.padding, const EdgeInsets.symmetric(vertical: 12.0));

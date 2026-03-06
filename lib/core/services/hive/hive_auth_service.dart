@@ -29,6 +29,17 @@ class HiveAuthService {
     await sbox.put('currentUserEmail', user.email);
   }
 
+  Future<void> updateUser(User user, {String? previousEmail}) async {
+    final box = _box;
+    if (previousEmail != null && previousEmail != user.email) {
+      if (box.containsKey(previousEmail)) {
+        await box.delete(previousEmail);
+      }
+    }
+    await box.put(user.email, user);
+    await setCurrentUser(user);
+  }
+
   /// Return currently logged-in user or null
   User? getCurrentUser() {
     final sbox = HiveService.sessionBox();
